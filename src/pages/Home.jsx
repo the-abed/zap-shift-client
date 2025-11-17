@@ -1,9 +1,9 @@
 import React from 'react';
-import Banner from '../../components/Banner';
-import HowItWorks from '../../components/home/HowItWorks';
-import OurServices from '../../components/home/OurServices';
-import Reviews from '../../components/home/Review/Reviews';
-import Brands from '../../components/home/Brands';
+import Banner from '../../src/components/Banner';
+import HowItWorks from '../../src/components/home/HowItWorks';
+import OurServices from '../../src/components/home/OurServices';
+import Reviews from '../../src/components/home/Review/Reviews';
+import Brands from '../../src/components/home/Brands';
 
 const reviewsPromise = fetch('./reviews.json').then((res) => res.json());
 

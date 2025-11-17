@@ -8,7 +8,9 @@ import bannerImg3 from "../assets/banner/banner3.png";
 
 const Banner = () => {
   return (
-    <Carousel autoPlay={true} infiniteLoop={true} interval={3000}>
+    <Carousel autoPlay={true} infiniteLoop={true} interval={3000}
+    className="my-10"
+    >
       <div>
         <img src={bannerImg1} alt="" />
       </div>
