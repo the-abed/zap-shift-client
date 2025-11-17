@@ -1,11 +1,13 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import GoogleLogin from "../components/GoogleLogin";
 
 const Login = () => {
   const { signIn, googleSignIn } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const {
     register,
@@ -18,6 +20,7 @@ const Login = () => {
     signIn(data.email, data.password)
       .then((result) => {
         console.log(result.user);
+        navigate(location.state || "/");
       })
       .catch((error) => console.log(error.message));
   };
@@ -75,6 +78,7 @@ const Login = () => {
           <p className="mt-3">
             New to zapShipt?
             <Link
+            state={location.state}
               to="/register"
               className="link link-hover underline hover:text-green-600"
             >

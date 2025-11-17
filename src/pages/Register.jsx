@@ -1,11 +1,15 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import useAuth from "../hooks/useAuth";
-import { Link } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import GoogleLogin from "../components/GoogleLogin";
+import axios, { Axios } from "axios";
 
 const Register = () => {
-  const { registerUser, signIn, googleSignIn } = useAuth();
+    const navigate = useNavigate();
+  const location = useLocation();
+  console.log(location,"in register");
+  const { registerUser, updateUserProfile } = useAuth();
   const {
     register,
     handleSubmit,
@@ -14,11 +18,40 @@ const Register = () => {
 
   const handleRegister = (data) => {
     console.log(data);
-    registerUser(data.email, data.password)
-      .then((result) => {
-        console.log(result.user);
-      })
-      .catch((error) => console.log(error.message));
+    const profileImage = data.photo[0];
+
+    registerUser(data.email, data.password).then((result) => {
+      console.log(result.user);
+
+      const formData = new FormData();
+      formData.append("image", profileImage);
+
+      // Prepare form data for imageBB
+      const imageApiUrl = `https://api.imgbb.com/1/upload?key=${
+        import.meta.env.VITE_IMAGE_HOST_KEY
+      }`;
+
+      // 2. Upload to ImgBB using Axios
+      axios.post(imageApiUrl, formData).then((res) => {
+        const profileImage = res.data.data.url;
+        console.log(profileImage);
+
+        // 3.Update profile
+        const userProfile = {
+          displayName: data.name,
+          photoURL: profileImage,
+        };
+
+        updateUserProfile(userProfile)
+          .then(() => {
+            console.log("User profile updated");
+            navigate(location.state || "/");
+          })
+          .catch((error) => console.log(error.message));
+      });
+
+      
+    });
   };
   return (
     <div className="card bg-base-100 mx-auto w-full max-w-sm shrink-0 shadow-2xl mt-8">
@@ -27,6 +60,27 @@ const Register = () => {
         <p className="text-gray-600">register with zapShipt</p>
         <form onSubmit={handleSubmit(handleRegister)}>
           <fieldset className="fieldset">
+            {/* Name */}
+            <label className="label">Name</label>
+            <input
+              type="text"
+              {...register("name", { required: true })}
+              className="input"
+              placeholder="Your Name"
+            />
+            {errors.name?.type === "required" && (
+              <span className="text-red-500">Name is required</span>
+            )}
+
+            {/* Photo */}
+            <label className="label">Photo</label>
+            <input
+              type="file"
+              {...register("photo", { required: true })}
+              className=" file-input "
+              placeholder="Your Photo"
+            />
+
             {/* Email */}
             <label className="label">Email</label>
             <input

@@ -9,7 +9,7 @@ const AuthLayout = () => {
       <nav>
         <Logo></Logo>
       </nav>
-      <main className="flex items-center ">
+      <main className="flex flex-col md:flex-row items-center bg-green-100">
         <div className="flex-1 ">
           <Outlet></Outlet>
         </div>
