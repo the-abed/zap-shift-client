@@ -8,12 +8,14 @@ import Register from "../pages/Register";
 import Rider from "../pages/rider/Rider";
 import PrivateRoute from "./PrivateRoute";
 import SendParcel from "../pages/sendParcel/SendParcel";
+import LoaderSpinner from "../components/LoaderSpinner";
 
 
 export const router = createBrowserRouter([
     {
         path: '/',
         Component: RootLayout,
+        hydrateFallbackElement: <LoaderSpinner></LoaderSpinner>,
         children: [
             {
                 index: true,
