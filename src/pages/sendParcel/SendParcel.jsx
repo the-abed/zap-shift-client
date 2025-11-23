@@ -5,7 +5,7 @@
 // The whole form is validated and submitted through react-hook-form.
 
 import React, { useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useLoaderData } from 'react-router';
 
 /* ------------------------------------------------------------------ */
@@ -47,14 +47,14 @@ const RECEIVER_FIELDS = [
   { name: 'receiverEmail', label: 'Receiver Email', type: 'email', placeholder: 'Enter receiver email' },
   { name: 'receiverPhone', label: 'Receiver Phone', placeholder: 'Enter receiver phone' },
   { name: 'receiverAddress', label: 'Receiver Address', placeholder: 'Enter receiver address' },
-  { name: 'receiverDistrict', label: 'Receiver District', placeholder: 'Enter receiver district' },
+  
 ];
 
 export default function SendParcel() {
   /* -------------------------------------------------------------- */
   /*  Form logic – react-hook-form gives us register, watch, etc.   */
   /* -------------------------------------------------------------- */
-  const { register, handleSubmit, watch, formState: { errors } } = useForm();
+  const { register, handleSubmit, control, formState: { errors } } = useForm();
   const serviceCenter = useLoaderData(); // array of {region, district, ...}
 
   /* derive unique regions once */
@@ -64,7 +64,10 @@ export default function SendParcel() {
   );
 
   /* watch selected sender region so we can filter districts */
-  const senderRegion = watch('senderRegion');
+  const senderRegion = useWatch( {control, name:'senderRegion'});
+  const receiverRegion = useWatch( {control, name:'receiverRegion'});
+
+
 
   /* memoised list of districts for the selected region */
   const senderDistricts = useMemo(() => {
@@ -72,12 +75,21 @@ export default function SendParcel() {
     return serviceCenter.filter((c) => c.region === senderRegion);
   }, [senderRegion, serviceCenter]);
 
+  const receiverDistricts = useMemo(() => {
+    if (!receiverRegion) return [];
+    return serviceCenter.filter((c) => c.region === receiverRegion);
+  }, [receiverRegion, serviceCenter]);
+
+  
+
   /* -------------------------------------------------------------- */
   /*  Submit handler – replace with actual API call when ready      */
   /* -------------------------------------------------------------- */
   const onSubmit = (data) => {
-    console.log('Parcel payload:', data);
+    // console.log('Parcel payload:', data);
     // TODO: POST /parcels
+    const sameDistrict = data.senderDistricts === data.receiverDistricts;
+    console.log(sameDistrict);
   };
 
   /* ============================================================== */
@@ -138,7 +150,7 @@ export default function SendParcel() {
               <Input key={f.name} {...f} register={register} />
             ))}
 
-            <Select label="Region" register={register} name="senderRegion" defaultValue="">
+            <Select className="input w-full" label="Region" register={register} name="senderRegion" defaultValue="">
               <option value="" disabled>
                 Select your region
               </option>
@@ -149,7 +161,7 @@ export default function SendParcel() {
               ))}
             </Select>
 
-            <Select label="District" register={register} name="senderDistrict" defaultValue="">
+            <Select className="input w-full"  label="District" register={register} name="senderDistrict" defaultValue="">
               <option value="" disabled>
                 Select your district
               </option>
@@ -167,7 +179,31 @@ export default function SendParcel() {
             {RECEIVER_FIELDS.map((f) => (
               <Input key={f.name} {...f} register={register} />
             ))}
+
+              <Select className="input w-full"  label="Region" register={register} name="receiverRegion" defaultValue="">
+              <option value="" disabled>
+                Select your region
+              </option>
+              {regions.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </Select>
+
+            <Select className="input w-full"  label="District" register={register} name="receiverDistrict" defaultValue="">
+              <option value="" disabled>
+                Select your district
+              </option>
+              {receiverDistricts.map((d) => (
+                <option key={d.district} value={d.district}>
+                  {d.district}
+                </option>
+              ))}
+            </Select>
           </section>
+
+         
         </div>
 
         <button type="submit" className="myBtn mt-6">

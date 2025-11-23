@@ -85,7 +85,7 @@
 //             <h4 className="text-xl font-bold">Sender Details</h4>
 //             {/* Sender Name */}
 //             <fieldset className="fieldset">
-//               <label className="label">Sender Name</label>
+//               <label className="label">Sender Name<label>
 //               <input
 //                 type="text"
 //                 {...register("senderName")}
