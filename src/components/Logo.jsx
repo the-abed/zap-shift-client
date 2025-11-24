@@ -6,7 +6,7 @@ const Logo = () => {
     return (
         <Link to='/'>
          <div className='flex items-center '>
-         <img src={logo} alt="" />
+         <img width={35} src={logo} alt="logo" />
          <h1 className='text-3xl font-bold relative right-3 top-2 hover:text-primary'>ZapShift</h1>
          </div>
         </Link>

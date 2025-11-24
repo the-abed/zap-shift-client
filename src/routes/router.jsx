@@ -9,6 +9,8 @@ import Rider from "../pages/rider/Rider";
 import PrivateRoute from "./PrivateRoute";
 import SendParcel from "../pages/sendParcel/SendParcel";
 import LoaderSpinner from "../components/LoaderSpinner";
+import DashboardLayout from "../layouts/DashboardLayout";
+import MyParcel from "../pages/Dashboard/MyParcel/MyParcel";
 
 
 export const router = createBrowserRouter([
@@ -50,6 +52,16 @@ export const router = createBrowserRouter([
             {
                 path: "/register",
                 Component: Register
+            }
+        ]
+    },
+    {
+        path: '/',
+        element: <PrivateRoute><DashboardLayout></DashboardLayout></PrivateRoute>,
+        children: [
+            {
+                path: 'myParcel',
+               Component: MyParcel
             }
         ]
     }

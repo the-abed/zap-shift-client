@@ -1,21 +1,25 @@
 // SendParcel.jsx
-// A single-page form that lets users book a parcel delivery.
-// Data for regions/districts is fetched via React-Router loader and rendered
-// as cascading selects (district list updates when region changes).
-// The whole form is validated and submitted through react-hook-form.
+import React, { useMemo, useEffect } from "react";
+import { useForm, useWatch } from "react-hook-form";
+import { useLoaderData } from "react-router";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import useAuth from "../../hooks/useAuth";
 
-import React, { useMemo } from 'react';
-import { useForm, useWatch } from 'react-hook-form';
-import { useLoaderData } from 'react-router';
-
-/* ------------------------------------------------------------------ */
-/*  Re-usable UI primitives                                             */
-/* ------------------------------------------------------------------ */
-const Input = ({ label, register, name, type = 'text', ...rest }) => (
+/* ---------------- re-usable UI ---------------- */
+const Input = ({
+  label,
+  name,
+  type = "text",
+  register,
+  defaultValue,
+  ...rest
+}) => (
   <fieldset className="fieldset">
     <label className="label">{label}</label>
     <input
       type={type}
+      defaultValue={defaultValue} // applies auth default
       {...register(name)}
       className="input w-full"
       {...rest}
@@ -23,53 +27,60 @@ const Input = ({ label, register, name, type = 'text', ...rest }) => (
   </fieldset>
 );
 
-const Select = ({ label, register, name, children, ...rest }) => (
+const Select = ({ label, name, register, defaultValue, children, ...rest }) => (
   <fieldset className="fieldset">
     <legend className="fieldset-legend">{label}</legend>
-    <select {...register(name)} className="input" {...rest}>
+    <select
+      {...register(name)}
+      defaultValue={defaultValue} // applies auth default
+      className="input w-full"
+      {...rest}
+    >
       {children}
     </select>
   </fieldset>
 );
 
-/* ------------------------------------------------------------------ */
-/*  Field definitions – keeps JSX DRY                                   */
-/* ------------------------------------------------------------------ */
-const SENDER_FIELDS = [
-  { name: 'senderName', label: 'Sender Name', placeholder: 'Enter your name' },
-  { name: 'senderEmail', label: 'Sender Email', type: 'email', placeholder: 'Enter your email' },
-  { name: 'senderPhone', label: 'Sender Phone', placeholder: 'Enter your phone' },
-  { name: 'senderAddress', label: 'Sender Address', placeholder: 'Enter your address' },
-];
+/* -------------- field lists -------------- */
+
 
 const RECEIVER_FIELDS = [
-  { name: 'receiverName', label: 'Receiver Name', placeholder: 'Enter receiver name' },
-  { name: 'receiverEmail', label: 'Receiver Email', type: 'email', placeholder: 'Enter receiver email' },
-  { name: 'receiverPhone', label: 'Receiver Phone', placeholder: 'Enter receiver phone' },
-  { name: 'receiverAddress', label: 'Receiver Address', placeholder: 'Enter receiver address' },
-  
+  { name: "receiverName", label: "Receiver Name" },
+  { name: "receiverEmail", label: "Receiver Email", type: "email" },
+  { name: "receiverPhone", label: "Receiver Phone" },
+  { name: "receiverAddress", label: "Receiver Address" },
 ];
 
 export default function SendParcel() {
-  /* -------------------------------------------------------------- */
-  /*  Form logic – react-hook-form gives us register, watch, etc.   */
-  /* -------------------------------------------------------------- */
-  const { register, handleSubmit, control, formState: { errors } } = useForm();
-  const serviceCenter = useLoaderData(); // array of {region, district, ...}
+  const { register, handleSubmit, control } = useForm();
+  const { user } = useAuth(); // ← auth data
+  const axiosSecure = useAxiosSecure();
+  const serviceCenter = useLoaderData();
 
-  /* derive unique regions once */
+
+  const SENDER_FIELDS = (defaults) => [
+  { name: "senderName", label: "Sender Name", defaultValue: user?.displayName || '' ,
+    readOnly: true
+   },
+  {
+    name: "senderEmail",
+    label: "Sender Email",
+    type: "email",
+    defaultValue: user?.email || '',
+    readOnly: true
+  },
+  { name: "senderPhone", label: "Sender Phone" },
+  { name: "senderAddress", label: "Sender Address" },
+];
+
   const regions = useMemo(
-    () => [...new Set(serviceCenter.map(r => r.region))],
+    () => [...new Set(serviceCenter.map((r) => r.region))],
     [serviceCenter]
   );
 
-  /* watch selected sender region so we can filter districts */
-  const senderRegion = useWatch( {control, name:'senderRegion'});
-  const receiverRegion = useWatch( {control, name:'receiverRegion'});
+  const senderRegion = useWatch({ control, name: "senderRegion" });
+  const receiverRegion = useWatch({ control, name: "receiverRegion" });
 
-
-
-  /* memoised list of districts for the selected region */
   const senderDistricts = useMemo(() => {
     if (!senderRegion) return [];
     return serviceCenter.filter((c) => c.region === senderRegion);
@@ -80,33 +91,69 @@ export default function SendParcel() {
     return serviceCenter.filter((c) => c.region === receiverRegion);
   }, [receiverRegion, serviceCenter]);
 
-  
 
-  /* -------------------------------------------------------------- */
-  /*  Submit handler – replace with actual API call when ready      */
-  /* -------------------------------------------------------------- */
-  const onSubmit = (data) => {
-    // console.log('Parcel payload:', data);
-    // TODO: POST /parcels
-    const sameDistrict = data.senderDistricts === data.receiverDistricts;
-    console.log(sameDistrict);
+  /* -------- submit logic (unchanged) -------- */
+  const handleSendParcel = (data) => {
+    console.log(data);
+    const isDocument = data.parcelType === "document";
+    const isSameDistrict = data.senderDistrict === data.receiverDistrict;
+    const parcelWeight = parseFloat(data.parcelWeight);
+    let cost = 0;
+    if (isDocument) {
+      cost = isSameDistrict ? 50 : 80;
+    } else {
+      if (parcelWeight <= 3) {
+        cost = isSameDistrict ? 110 : 150;
+      } else {
+        const minCharge = isSameDistrict ? 110 : 150;
+        const extraWeight = parcelWeight - 3;
+        const extraCost = isSameDistrict
+          ? extraWeight * 40
+          : extraWeight * 40 + 40;
+        cost = minCharge + extraCost;
+      }
+    }
+    console.log("cost is", cost);
+    Swal.fire({
+      title: "Are you want send parcel?",
+      text: `Your parcel cost is ${cost} taka.`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, send it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // save the parcel info to the database
+        axiosSecure.post("/parcels", data).then((res) => {
+          console.log(res.data);
+          if (res.data.insertedId) {
+            Swal.fire({
+              title: "Parcel has been sent !",
+              text: "Your parcel has been sent.",
+              icon: "success",
+            });
+          }
+        });
+      }
+    });
   };
 
-  /* ============================================================== */
-  /*  Render                                                        */
-  /* ============================================================== */
+  /* ========================================================== */
+  /*  Render – now with EXTRA fields and auth defaults injected */
+  /* ========================================================== */
   return (
     <div className="my-10 bg-white shadow-md">
       <h2 className="text-5xl font-bold text-secondary px-6">Send Parcel</h2>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="p-6 mt-5">
+      <form onSubmit={handleSubmit(handleSendParcel)} className="p-6 mt-5">
         {/* Parcel type radios */}
         <div className="flex gap-4 mb-6">
           <label className="label flex items-center gap-2">
             <input
               type="radio"
               value="document"
-              {...register('parcelType')}
+              {...register("parcelType")}
               className="radio"
               defaultChecked
             />
@@ -116,14 +163,14 @@ export default function SendParcel() {
             <input
               type="radio"
               value="non-document"
-              {...register('parcelType')}
+              {...register("parcelType")}
               className="radio"
             />
             Non-Document
           </label>
         </div>
 
-        {/* Parcel details grid */}
+        {/* Parcel info */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <Input
             label="Parcel Name"
@@ -136,21 +183,30 @@ export default function SendParcel() {
             register={register}
             name="parcelWeight"
             type="number"
-            placeholder="Enter parcel weight"
             step="0.1"
+            placeholder="Enter parcel weight"
           />
         </div>
 
-        {/* Two-column layout: Sender vs Receiver */}
+        {/* Two-column: Sender vs Receiver */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           {/* ----------- Sender ----------- */}
           <section>
             <h4 className="text-xl font-bold mb-3">Sender Details</h4>
-            {SENDER_FIELDS.map((f) => (
+            {/*  EXTRA FIELDS with auth defaults  */}
+            {SENDER_FIELDS({
+              name: user?.displayName || "",
+              email: user?.email || "",
+            }).map((f) => (
               <Input key={f.name} {...f} register={register} />
             ))}
 
-            <Select className="input w-full" label="Region" register={register} name="senderRegion" defaultValue="">
+            <Select
+              label="Region"
+              register={register}
+              name="senderRegion"
+              defaultValue=""
+            >
               <option value="" disabled>
                 Select your region
               </option>
@@ -161,7 +217,12 @@ export default function SendParcel() {
               ))}
             </Select>
 
-            <Select className="input w-full"  label="District" register={register} name="senderDistrict" defaultValue="">
+            <Select
+              label="District"
+              register={register}
+              name="senderDistrict"
+              defaultValue=""
+            >
               <option value="" disabled>
                 Select your district
               </option>
@@ -180,9 +241,15 @@ export default function SendParcel() {
               <Input key={f.name} {...f} register={register} />
             ))}
 
-              <Select className="input w-full"  label="Region" register={register} name="receiverRegion" defaultValue="">
+            {/*  EXTRA REGION + DISTRICT for receiver  */}
+            <Select
+              label="Region"
+              register={register}
+              name="receiverRegion"
+              defaultValue=""
+            >
               <option value="" disabled>
-                Select your region
+                Select receiver region
               </option>
               {regions.map((r) => (
                 <option key={r} value={r}>
@@ -191,9 +258,14 @@ export default function SendParcel() {
               ))}
             </Select>
 
-            <Select className="input w-full"  label="District" register={register} name="receiverDistrict" defaultValue="">
+            <Select
+              label="District"
+              register={register}
+              name="receiverDistrict"
+              defaultValue=""
+            >
               <option value="" disabled>
-                Select your district
+                Select receiver district
               </option>
               {receiverDistricts.map((d) => (
                 <option key={d.district} value={d.district}>
@@ -202,8 +274,6 @@ export default function SendParcel() {
               ))}
             </Select>
           </section>
-
-         
         </div>
 
         <button type="submit" className="myBtn mt-6">
@@ -213,5 +283,3 @@ export default function SendParcel() {
     </div>
   );
 }
-
-
