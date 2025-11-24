@@ -114,6 +114,7 @@ export default function SendParcel() {
       }
     }
     console.log("cost is", cost);
+    data.cost = cost;
     Swal.fire({
       title: "Are you want send parcel?",
       text: `Your parcel cost is ${cost} taka.`,
