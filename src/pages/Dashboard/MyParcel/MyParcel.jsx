@@ -6,6 +6,7 @@ import { FaMagnifyingGlass } from "react-icons/fa6";
 import { FaRegEdit } from "react-icons/fa";
 import { IoTrashOutline } from "react-icons/io5";
 import Swal from "sweetalert2";
+import { Link } from "react-router";
 
 const MyParcel = () => {
   const { user } = useAuth();
@@ -21,40 +22,41 @@ const MyParcel = () => {
 
   const handleDeleteParcel = (id) => {
     Swal.fire({
-  title: "Are you sure?",
-  text: "You won't be able to revert this!",
-  icon: "warning",
-  showCancelButton: true,
-  confirmButtonColor: "#3085d6",
-  cancelButtonColor: "#d33",
-  confirmButtonText: "Yes, delete it!"
-}).then((result) => {
-  if (result.isConfirmed) {
-    
-    axiosSecure.delete(`/parcels/${id}`)
-    .then(res => {
-      if(res.data.deletedCount){
-        // refresh the data after delete
-        refetch();
-        Swal.fire(
-          'Deleted!',
-          'Your parcel has been deleted.',
-          'success'
-        )
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        axiosSecure.delete(`/parcels/${id}`).then((res) => {
+          if (res.data.deletedCount) {
+            // refresh the data after delete
+            refetch();
+            Swal.fire("Deleted!", "Your parcel has been deleted.", "success");
+          }
+        });
+
       }
-    })
+    });
+  };
 
-    // Swal.fire({
-    //   title: "Deleted!",
-    //   text: "Your file has been deleted.",
-    //   icon: "success"
-    // });
-  }
-});
+  const handlePayment = async (parcel)=>{
+    const paymentInfo = {
+      cost: parcel.cost,
+      parcelId: parcel._id,
+      senderEmail: parcel.senderEmail,
+      parcelName: parcel.parcelName
+    }
+    const res = await axiosSecure.post('payment-checkout-session', paymentInfo);
+    console.log(res.data);
+    window.location.assign(res.data.url);
     
   }
 
-//   Calculate total cost
+  //   Calculate total cost
   const totalCost = parcels.reduce(
     (sum, item) => sum + (item.cost ? Number(item.cost) : 0),
     0
@@ -76,8 +78,9 @@ const MyParcel = () => {
               <th>Parcel Type</th>
               <th>Parcel Weight</th>
               <th>Cost</th>
-              <th>Status</th>
-             <th>Actions</th>
+              <th>Payment Status</th>
+              <th>Delivery Status</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -96,30 +99,53 @@ const MyParcel = () => {
                 {/* If cost exists, show it — else show "N/A" */}
                 <td>{parcel.cost ? parcel.cost : "N/A"}</td>
 
-                {/* If status exists, show it — else default to "Pending" */}
-                <td>{parcel.status ? parcel.status : "Pending"}</td>
-
-                  {/* Action Buttons (View, Edit and Delete) */}
-                <td className="flex justify-center gap-2">
-                    <button className="btn btn-square tooltip hover:tooltip-bottom hover:bg-primary" data-tip="View"><FaMagnifyingGlass /></button>
-                    <button className="btn btn-square tooltip hover:tooltip-bottom hover:bg-primary" data-tip="Edit"><FaRegEdit /></button>
+                {/* If payment status exists, show it — else default to "Pending" */}
+                <td>
+                  {parcel.paymentStatus === "paid" ? (
+                    <span className="text-green-600">Paid</span>
+                  ) : (
+                    // <Link to={`/dashboard/payment/${parcel._id}`} className="myBtn btn-sm">Pay</Link>
                     <button
-                     onClick={() => handleDeleteParcel(parcel._id)}
-                     className="btn btn-square tooltip hover:tooltip-bottom hover:bg-primary" data-tip="Delete"><IoTrashOutline /></button>
+                    onClick={()=>handlePayment(parcel)} className="myBtn btn-sm">Pay</button>
+                  )}
                 </td>
-               
-              </tr>
 
-               
+                {/* If status exists, show it — else default to "Pending" */}
+                <td>
+                  {parcel.deliveryStatus ? parcel.deliveryStatus : "Pending"}
+                </td>
+
+                {/* Action Buttons (View, Edit and Delete) */}
+                <td className="flex justify-center gap-2">
+                  <button
+                    className="btn btn-square tooltip hover:tooltip-bottom hover:bg-primary"
+                    data-tip="View"
+                  >
+                    <FaMagnifyingGlass />
+                  </button>
+                  <button
+                    className="btn btn-square tooltip hover:tooltip-bottom hover:bg-primary"
+                    data-tip="Edit"
+                  >
+                    <FaRegEdit />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteParcel(parcel._id)}
+                    className="btn btn-square tooltip hover:tooltip-bottom hover:bg-primary"
+                    data-tip="Delete"
+                  >
+                    <IoTrashOutline />
+                  </button>
+                </td>
+              </tr>
             ))}
 
             {/* Total Cost Row */}
             <tr className="bg-base-100 font-bold text-lg ">
+              <td colSpan={4}></td>
               <td colSpan={3}></td>
-              <td colSpan={2}></td>
               <td colSpan={1}>Total Cost: {totalCost}</td>
             </tr>
-
           </tbody>
         </table>
       </div>

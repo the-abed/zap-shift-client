@@ -16,7 +16,7 @@ body {
 }
 
 .myBtn {
-  @apply btn bg-base-100 hover:bg-primary rounded-lg mt-3 ;
+  @apply btn bg-base-100 hover:bg-primary rounded-lg mt-1;
 }
 .myBtn .active {
   background-color: #caeb66;

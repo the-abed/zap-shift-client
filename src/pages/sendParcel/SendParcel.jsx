@@ -1,7 +1,7 @@
 // SendParcel.jsx
 import React, { useMemo, useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
-import { useLoaderData } from "react-router";
+import { useLoaderData, useNavigate } from "react-router";
 import Swal from "sweetalert2";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import useAuth from "../../hooks/useAuth";
@@ -56,6 +56,7 @@ export default function SendParcel() {
   const { user } = useAuth(); // ← auth data
   const axiosSecure = useAxiosSecure();
   const serviceCenter = useLoaderData();
+  const navigate = useNavigate();
 
 
   const SENDER_FIELDS = (defaults) => [
@@ -129,6 +130,7 @@ export default function SendParcel() {
         axiosSecure.post("/parcels", data).then((res) => {
           console.log(res.data);
           if (res.data.insertedId) {
+            navigate("/dashboard/myParcel");
             Swal.fire({
               title: "Parcel has been sent !",
               text: "Your parcel has been sent.",

@@ -27,14 +27,14 @@ const Navbar = () => {
             <NavLink to="/sendParcel">Send Parcel</NavLink>
           </li>
           <li>
-            <NavLink to="/myParcel">My Parcel</NavLink>
+            <NavLink to="dashboard/myParcel">My Parcel</NavLink>
           </li>
         </>
       )}
     </>
   );
   return (
-    <div className="navbar bg-base-100 shadow-sm px-5 ">
+    <div className="navbar bg-base-100 shadow-sm px-5 rounded-2xl mt-3">
       <div className="navbar max-w-11/12 mx-auto">
         <div className="navbar-start">
           <div className="dropdown">
