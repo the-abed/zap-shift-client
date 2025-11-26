@@ -15,6 +15,7 @@ import Payment from "../pages/Dashboard/Payment/Payment";
 import PaymentSuccess from "../pages/Dashboard/Payment/PaymentSuccess";
 import PaymentCancelled from "../pages/Dashboard/Payment/PaymentCancelled";
 import PaymentHistory from "../pages/Dashboard/Payment/PaymentHistory";
+import ApproveRiders from "../pages/Dashboard/ApproveRiders/ApproveRiders";
 
 
 export const router = createBrowserRouter([
@@ -30,18 +31,19 @@ export const router = createBrowserRouter([
         {
             path: '/coverage',
             Component: Coverage,
-            loader: () => fetch('./serviceCenter.json').then(res => res.json())
+            loader: () => fetch('/serviceCenter.json').then(res => res.json())
         },
         {
             path: "rider",
             element: <PrivateRoute>
                 <Rider></Rider>
-            </PrivateRoute>
+            </PrivateRoute>,
+            loader: () => fetch('/serviceCenter.json').then(res => res.json())
         },
         {
             path: "/sendParcel",
             element: <PrivateRoute><SendParcel></SendParcel></PrivateRoute>,
-            loader: () => fetch('./serviceCenter.json').then(res => res.json())
+            loader: () => fetch('/serviceCenter.json').then(res => res.json())
         }
     ]
     },
@@ -82,6 +84,10 @@ export const router = createBrowserRouter([
             {
                 path: 'payment-history',
                 Component: PaymentHistory
+            },
+            {
+                path: 'approve-riders',
+                Component: ApproveRiders
             }
         ]
     }

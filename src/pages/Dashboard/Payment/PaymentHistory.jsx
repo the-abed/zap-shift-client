@@ -69,6 +69,8 @@ const PaymentHistory = () => {
                     View
                   </button>
                 </td>
+
+                
               </tr>
             ))}
           </tbody>

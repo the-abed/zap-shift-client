@@ -18,7 +18,7 @@ const Navbar = () => {
         <NavLink to="/">Home</NavLink>
       </li>
       <li>
-        <NavLink to="/coverage">Coverage</NavLink>
+        <NavLink to="/rider">Rider</NavLink>
       </li>
 
       {user && (
@@ -31,10 +31,13 @@ const Navbar = () => {
           </li>
         </>
       )}
+      <li>
+        <NavLink to="/coverage">Coverage</NavLink>
+      </li>
     </>
   );
   return (
-    <div className="navbar bg-base-100 shadow-sm px-5 rounded-2xl mt-3">
+    <div className="navbar bg-base-100 shadow-sm rounded-2xl mt-3">
       <div className="navbar max-w-11/12 mx-auto">
         <div className="navbar-start">
           <div className="dropdown">

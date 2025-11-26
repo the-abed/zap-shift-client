@@ -4,11 +4,12 @@ import useAuth from "../hooks/useAuth";
 import { Link, useLocation, useNavigate } from "react-router";
 import GoogleLogin from "../components/GoogleLogin";
 import axios, { Axios } from "axios";
+import useAxiosSecure from "../hooks/useAxiosSecure";
 
 const Register = () => {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
-  console.log(location,"in register");
+  const axiosSecure = useAxiosSecure();
   const { registerUser, updateUserProfile } = useAuth();
   const {
     register,
@@ -17,11 +18,12 @@ const Register = () => {
   } = useForm();
 
   const handleRegister = (data) => {
-    console.log(data);
+
     const profileImage = data.photo[0];
 
-    registerUser(data.email, data.password).then((result) => {
-      console.log(result.user);
+    registerUser(data.email, data.password)
+    .then((result) => {
+     
 
       const formData = new FormData();
       formData.append("image", profileImage);
@@ -33,13 +35,26 @@ const Register = () => {
 
       // 2. Upload to ImgBB using Axios
       axios.post(imageApiUrl, formData).then((res) => {
-        const profileImage = res.data.data.url;
-        console.log(profileImage);
+        const photoURL = res.data.data.url;
+        
+        //3. Create user in the database
+        const user = {
+          email: data.email,
+          displayName: data.name,
+          photoURL: photoURL,
+        };
 
-        // 3.Update profile
+        axiosSecure.post("/users", user).then((res) => {
+          if (res.data.insertedId) {
+            navigate(location.state || "/");
+          }
+          console.log('user created in db' ,res.data);
+        });
+
+        // 4.Update profile
         const userProfile = {
           displayName: data.name,
-          photoURL: profileImage,
+          photoURL: photoURL,
         };
 
         updateUserProfile(userProfile)
@@ -122,7 +137,7 @@ const Register = () => {
             <div>
               <a className="link link-hover">Forgot password?</a>
             </div>
-            <button className="btn btn-neutral mt-4">Login</button>
+            <button className="btn btn-neutral mt-4">Register</button>
           </fieldset>
           <p className=" mt-3">
             Already have an account?{" "}

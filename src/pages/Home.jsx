@@ -5,7 +5,7 @@ import OurServices from '../../src/components/home/OurServices';
 import Reviews from '../../src/components/home/Review/Reviews';
 import Brands from '../../src/components/home/Brands';
 
-const reviewsPromise = fetch('./reviews.json').then((res) => res.json());
+const reviewsPromise = fetch('/reviews.json').then((res) => res.json());
 
 
 const Home = () => {
