@@ -2,11 +2,13 @@ import React from 'react';
 import { Link, NavLink, Outlet } from 'react-router';
 import Logo from '../components/Logo';
 import { CiCreditCard1, CiDeliveryTruck } from "react-icons/ci";
-import { FaAddressCard, FaMotorcycle } from 'react-icons/fa6';
+import { FaAddressCard, FaMotorcycle, FaUser } from 'react-icons/fa6';
+import useRole from '../hooks/useRole';
 
 
 
 const DashboardLayout = () => {
+  const { role } = useRole();
     return (
         <div>
            <div className="drawer lg:drawer-open">
@@ -45,18 +47,32 @@ const DashboardLayout = () => {
             <span className="is-drawer-close:hidden">My Parcel</span>
             </NavLink>
         </li>
+         <li>
+            <NavLink to = "payment-history" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Parcel">
+            <CiCreditCard1 className="inline-block size-4.5" />
+            <span className="is-drawer-close:hidden">Payment History</span>
+            </NavLink>
+        </li>
+        
+
+        {
+          role === "admin"&& <>
+           <li>
+            <NavLink to = "manage-users" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Manage Users">
+             <FaUser className="inline-block size-4.5" />   
+            <span className="is-drawer-close:hidden">Manage Users</span>
+            </NavLink>
+        </li>
         <li>
             <NavLink to = "approve-riders" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Approve Riders">
              <FaMotorcycle className="inline-block size-4.5" />   
             <span className="is-drawer-close:hidden">Approve Riders</span>
             </NavLink>
         </li>
-        <li>
-            <NavLink to = "payment-history" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Parcel">
-            <CiCreditCard1 className="inline-block size-4.5" />
-            <span className="is-drawer-close:hidden">Payment History</span>
-            </NavLink>
-        </li>
+          </>
+        }
+       
+       
 
         {/* List item */}
         <li>

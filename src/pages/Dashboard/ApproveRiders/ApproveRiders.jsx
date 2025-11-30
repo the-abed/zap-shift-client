@@ -1,7 +1,7 @@
 import React from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
-import { FaTrash, FaUserCheck } from "react-icons/fa6";
+import { FaEye, FaTrash, FaUserCheck } from "react-icons/fa6";
 import { IoPersonRemove } from "react-icons/io5";
 import Swal from "sweetalert2";
 import LoaderSpinner from "../../../components/LoaderSpinner";
@@ -115,6 +115,9 @@ const updateRiderStatus = async (rider, status) => {
 
                 {/* Buttons */}
                 <td>
+                  <button
+                 
+                   className="myBtn btn-sm"><FaEye></FaEye> View</button>
                   <button
                   onClick={()=> handleApproval(rider)}
                    className="myBtn btn-sm"><FaUserCheck></FaUserCheck> Approve</button>

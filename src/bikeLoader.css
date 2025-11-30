@@ -1,0 +1,71 @@
+.bike-loader {
+  text-align: center;
+}
+
+.loading-text {
+  margin-top: 20px;
+  font-size: 18px;
+  color: #555;
+  font-weight: 500;
+}
+
+/* Bike Container */
+.bike {
+  position: relative;
+  width: 120px;
+  height: 60px;
+  animation: bikeMove 1.5s linear infinite;
+}
+
+/* Wheels */
+.wheel {
+  position: absolute;
+  width: 35px;
+  height: 35px;
+  border: 3px solid #333;
+  border-radius: 50%;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  animation: spin 0.6s linear infinite;
+}
+
+.wheel.front {
+  right: 0;
+  bottom: 0;
+}
+
+.wheel.back {
+  left: 0;
+  bottom: 0;
+}
+
+/* Bike Body */
+.body {
+  position: absolute;
+  width: 80px;
+  height: 3px;
+  background: #333;
+  top: 20px;
+  left: 20px;
+  transform: rotate(-10deg);
+}
+
+/* Wheel Spinning */
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Bike Driving Motion */
+@keyframes bikeMove {
+  0% {
+    transform: translateX(-20px);
+  }
+  50% {
+    transform: translateX(20px);
+  }
+  100% {
+    transform: translateX(-20px);
+  }
+}

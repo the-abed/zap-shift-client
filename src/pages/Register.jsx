@@ -48,7 +48,7 @@ const Register = () => {
           if (res.data.insertedId) {
             navigate(location.state || "/");
           }
-          console.log('user created in db' ,res.data);
+          // console.log('user created in db' ,res.data);
         });
 
         // 4.Update profile
