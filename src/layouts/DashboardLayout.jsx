@@ -2,7 +2,8 @@ import React from 'react';
 import { Link, NavLink, Outlet } from 'react-router';
 import Logo from '../components/Logo';
 import { CiCreditCard1, CiDeliveryTruck } from "react-icons/ci";
-import { FaAddressCard, FaMotorcycle, FaUser } from 'react-icons/fa6';
+import { FaAddressCard, FaMotorcycle,  } from 'react-icons/fa6';
+import { MdOutlineDirectionsBike, MdOutlineManageAccounts } from "react-icons/md";
 import useRole from '../hooks/useRole';
 
 
@@ -48,7 +49,7 @@ const DashboardLayout = () => {
             </NavLink>
         </li>
          <li>
-            <NavLink to = "payment-history" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="My Parcel">
+            <NavLink to = "payment-history" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Payment History">
             <CiCreditCard1 className="inline-block size-4.5" />
             <span className="is-drawer-close:hidden">Payment History</span>
             </NavLink>
@@ -59,13 +60,13 @@ const DashboardLayout = () => {
           role === "admin"&& <>
            <li>
             <NavLink to = "manage-users" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Manage Users">
-             <FaUser className="inline-block size-4.5" />   
+             <MdOutlineManageAccounts className="inline-block size-4.5" />  
             <span className="is-drawer-close:hidden">Manage Users</span>
             </NavLink>
         </li>
         <li>
             <NavLink to = "approve-riders" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Approve Riders">
-             <FaMotorcycle className="inline-block size-4.5" />   
+             <MdOutlineDirectionsBike className="inline-block size-4.5" />  
             <span className="is-drawer-close:hidden">Approve Riders</span>
             </NavLink>
         </li>

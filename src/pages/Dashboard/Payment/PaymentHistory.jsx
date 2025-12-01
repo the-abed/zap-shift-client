@@ -2,6 +2,7 @@ import React from "react";
 import useAuth from "../../../hooks/useAuth";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
+import LoaderSpinner from "../../../components/LoaderSpinner";
 
 const PaymentHistory = () => {
   const { user } = useAuth();
@@ -15,7 +16,16 @@ const PaymentHistory = () => {
     },
   });
 
-  if (isLoading) return <p>Loading...</p>;
+  const { data : parcel = [] } = useQuery({
+    queryKey: ["parcel", user?.email],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/parcels?email=${user?.email}`);
+      console.log(res.data);
+      return res.data;
+    },
+  });
+
+  if (isLoading) return <LoaderSpinner></LoaderSpinner>;
 
   return (
     <div className="p-5">
@@ -24,11 +34,10 @@ const PaymentHistory = () => {
       </h2>
 
       <div className="overflow-x-auto">
-        <table className="table w-full border">
+        <table className="table w-full rounded-lg">
           <thead className="bg-gray-100 text-gray-800">
             <tr>
               <th>Parcel Info</th>
-              <th>Recipient Info</th>
               <th>Tracking Number</th>
               <th>Payment Info</th>
               <th>Action</th>
@@ -41,19 +50,14 @@ const PaymentHistory = () => {
                 {/* Parcel Info */}
                 <td className="p-3">
                   <p><strong>Name:</strong> {payment.parcelName}</p>
-                  <p><strong>Weight:</strong> {payment.parcelWeight} kg</p>
+                  
                 </td>
 
-                {/* Recipient Info */}
-                <td className="p-3">
-                  <p><strong>Name:</strong> {payment.receiverName}</p>
-                  <p><strong>Phone:</strong> {payment.receiverPhone}</p>
-                  <p><strong>District:</strong> {payment.receiverDistrict}</p>
-                </td>
+             
 
                 {/* Tracking Number */}
                 <td className="p-3 font-semibold text-blue-600">
-                  {"ddddddddd"}
+                  {payment.trackingId}
                 </td>
 
                 {/* Payment Info */}
