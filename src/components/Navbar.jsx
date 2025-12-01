@@ -73,6 +73,7 @@ const Navbar = () => {
         <div className="navbar-end">
           {user ? (
             <div className="avatar">
+              <img className="w-10 rounded-full cursor-pointer" src={user?.photoURL} alt="" />
               <button onClick={handleLogOut} className="myBtn ml-2">
                 LogOut
               </button>
