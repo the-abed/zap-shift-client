@@ -3,7 +3,7 @@ import { Link, NavLink, Outlet } from 'react-router';
 import Logo from '../components/Logo';
 import { CiCreditCard1, CiDeliveryTruck } from "react-icons/ci";
 import { FaAddressCard, FaMotorcycle,  } from 'react-icons/fa6';
-import { MdOutlineDirectionsBike, MdOutlineManageAccounts } from "react-icons/md";
+import { MdAssignmentInd, MdOutlineDirectionsBike, MdOutlineManageAccounts } from "react-icons/md";
 import useRole from '../hooks/useRole';
 
 
@@ -68,6 +68,12 @@ const DashboardLayout = () => {
             <NavLink to = "approve-riders" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Approve Riders">
              <MdOutlineDirectionsBike className="inline-block size-4.5" />  
             <span className="is-drawer-close:hidden">Approve Riders</span>
+            </NavLink>
+        </li>
+        <li>
+            <NavLink to = "assign-riders" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Assign Riders">
+             <MdAssignmentInd className="inline-block size-4.5" />  
+            <span className="is-drawer-close:hidden">Assign Riders</span>
             </NavLink>
         </li>
           </>

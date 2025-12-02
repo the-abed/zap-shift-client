@@ -9,7 +9,11 @@ import LoaderSpinner from "../../../components/LoaderSpinner";
 const ApproveRiders = () => {
   const axiosSecure = useAxiosSecure();
 
-  const { data: riders = [], isLoading, refetch } = useQuery({
+  const {
+    data: riders = [],
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["riders"],
     queryFn: async () => {
       const res = await axiosSecure.get("/riders");
@@ -17,41 +21,37 @@ const ApproveRiders = () => {
     },
   });
 
-const updateRiderStatus = async (rider, status) => {
-  try {
-    const res = await axiosSecure.patch(`/riders/${rider._id}`, {
-      status,
-      email: rider.email
-    });
-
-    if (res.data.modifiedCount) {
-      refetch(); // refresh rider list
-      Swal.fire({
-        position: "top-end",
-        icon: "success",
-        title: `Rider status is set to ${status}.`,
-        showConfirmButton: false,
-        timer: 2000,
+  const updateRiderStatus = async (rider, status) => {
+    try {
+      const res = await axiosSecure.patch(`/riders/${rider._id}`, {
+        status,
+        email: rider.email,
       });
-    } else {
-      Swal.fire("Info", "No changes were made", "info");
+
+      if (res.data.modifiedCount) {
+        refetch(); // refresh rider list
+        Swal.fire({
+          position: "top-end",
+          icon: "success",
+          title: `Rider status is set to ${status}.`,
+          showConfirmButton: false,
+          timer: 2000,
+        });
+      } else {
+        Swal.fire("Info", "No changes were made", "info");
+      }
+    } catch (err) {
+      console.error("Error updating rider:", err.response || err);
+      Swal.fire(
+        "Error",
+        err.response?.data?.message || "Failed to update rider status",
+        "error"
+      );
     }
-  } catch (err) {
-    console.error("Error updating rider:", err.response || err);
-    Swal.fire(
-      "Error",
-      err.response?.data?.message || "Failed to update rider status",
-      "error"
-    );
-  }
-};
-
-
-
+  };
 
   const handleApproval = async (rider) => {
     updateRiderStatus(rider, "approved");
-    
   };
 
   const handleReject = async (rider) => {
@@ -80,6 +80,7 @@ const updateRiderStatus = async (rider, status) => {
               <th>Contact</th>
               <th>Warehouse</th>
               <th>Status</th>
+              <th>Work Status</th>
               <th>Created At</th>
               <th>Action</th>
             </tr>
@@ -102,12 +103,19 @@ const updateRiderStatus = async (rider, status) => {
                   <span
                     className={
                       rider.status === "approved"
-                       ? "badge badge-success"
+                        ? "badge badge-success"
                         : "badge badge-warning"
                     }
                   >
                     {rider.status}
                   </span>
+                </td>
+                <td>
+                  {rider.workStatus === "available" ? (
+                    <span className="badge badge-success">Available</span>
+                  ) : (
+                    <span className="badge badge-warning">N/A</span>
+                  )}
                 </td>
 
                 {/* Created At */}
@@ -115,28 +123,33 @@ const updateRiderStatus = async (rider, status) => {
 
                 {/* Buttons */}
                 <td>
+                  <button className="myBtn btn-sm">
+                    <FaEye></FaEye> View
+                  </button>
                   <button
-                 
-                   className="myBtn btn-sm"><FaEye></FaEye> View</button>
-                  <button
-                  onClick={()=> handleApproval(rider)}
-                   className="myBtn btn-sm"><FaUserCheck></FaUserCheck> Approve</button>
-
-                  <button 
-                  onClick={()=> handleReject(rider)}
-                  className="myBtn btn-sm"><IoPersonRemove></IoPersonRemove> Reject</button>
+                    onClick={() => handleApproval(rider)}
+                    className="myBtn btn-sm"
+                  >
+                    <FaUserCheck></FaUserCheck> Approve
+                  </button>
 
                   <button
+                    onClick={() => handleReject(rider)}
+                    className="myBtn btn-sm"
+                  >
+                    <IoPersonRemove></IoPersonRemove> Reject
+                  </button>
 
-                   className="myBtn btn-sm"><FaTrash></FaTrash> Delete</button>
-
-
+                  <button className="myBtn btn-sm">
+                    <FaTrash></FaTrash> Delete
+                  </button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
     </div>
   );
 };

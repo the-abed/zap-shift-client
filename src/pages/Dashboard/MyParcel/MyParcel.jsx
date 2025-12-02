@@ -79,6 +79,7 @@ const MyParcel = () => {
               <th>Parcel Weight</th>
               <th>Cost</th>
               <th>Payment Status</th>
+              <th>Tracking Id</th>
               <th>Delivery Status</th>
               <th>Actions</th>
             </tr>
@@ -108,6 +109,10 @@ const MyParcel = () => {
                     <button
                     onClick={()=>handlePayment(parcel)} className="myBtn btn-sm">Pay</button>
                   )}
+                </td>
+                
+                <td>
+                  {parcel.trackingId ? parcel.trackingId : "N/A"}
                 </td>
 
                 {/* If status exists, show it — else default to "Pending" */}
