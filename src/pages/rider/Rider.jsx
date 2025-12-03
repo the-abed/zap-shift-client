@@ -132,11 +132,11 @@ export default function RiderApplication() {
           {/* Warehouse Selection (Full width) */}
           <fieldset className="fieldset">
             <legend className="fieldset-legend">
-              Which warehouse you want to work?
+              Select your district
             </legend>
-            <select {...register("warehouse")} className="input w-full">
+            <select {...register("district")} className="input w-full">
               <option value="" disabled selected>
-                Select warehouse
+                Select district
               </option>
               {warehouse.map((c) => (
                 <option key={c.centerId} value={c.district}>

@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, NavLink, Outlet } from 'react-router';
 import Logo from '../components/Logo';
 import { CiCreditCard1, CiDeliveryTruck } from "react-icons/ci";
+import {FaTasks} from 'react-icons/fa'
 import { FaAddressCard, FaMotorcycle,  } from 'react-icons/fa6';
 import { MdAssignmentInd, MdOutlineDirectionsBike, MdOutlineManageAccounts } from "react-icons/md";
 import useRole from '../hooks/useRole';
@@ -54,8 +55,21 @@ const DashboardLayout = () => {
             <span className="is-drawer-close:hidden">Payment History</span>
             </NavLink>
         </li>
-        
 
+        {/* Rider only links */}
+        {
+          role === "rider"&& <>
+          <li>
+            <NavLink to = "assigned-deliveries" className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Assigned Deliveries">
+             <FaTasks className="inline-block size-4.5" />  
+            <span className="is-drawer-close:hidden">Assigned Deliveries</span>
+            </NavLink>
+        </li>
+   
+        </>
+        }
+        
+      {/* Admin only links */}
         {
           role === "admin"&& <>
            <li>
