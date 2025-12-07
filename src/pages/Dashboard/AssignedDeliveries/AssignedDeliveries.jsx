@@ -20,7 +20,11 @@ const AssignedDeliveries = () => {
   });
 
   const handleUpdateDeliveryStatus = (parcel, status) => {
-    const statusInfo = { deliveryStatus: status };
+    const statusInfo = { 
+        deliveryStatus: status,
+        riderId: parcel.riderId,
+        trackingId: parcel.trackingId
+     };
     let message = `Parcel status updated to ${status
       .split("_")
       .join(" ")} successfully.`;
@@ -42,12 +46,12 @@ const AssignedDeliveries = () => {
 
   return (
     <div className="p-5">
-      <h2 className="text-3xl text-center">
+      <h2 className="text-3xl text-center font-bold">
         Assigned Deliveries : {parcels.length}
       </h2>
 
       {/* Table for assigned deliveries */}
-      <div className="overflow-x-auto ">
+      <div className="overflow-x-auto pt-5">
         <table className="table table-zebra">
           {/* head */}
           <thead>

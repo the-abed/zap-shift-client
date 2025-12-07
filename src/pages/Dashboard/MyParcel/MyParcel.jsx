@@ -38,23 +38,22 @@ const MyParcel = () => {
             Swal.fire("Deleted!", "Your parcel has been deleted.", "success");
           }
         });
-
       }
     });
   };
 
-  const handlePayment = async (parcel)=>{
+  const handlePayment = async (parcel) => {
     const paymentInfo = {
       cost: parcel.cost,
       parcelId: parcel._id,
       senderEmail: parcel.senderEmail,
-      parcelName: parcel.parcelName
-    }
-    const res = await axiosSecure.post('payment-checkout-session', paymentInfo);
+      parcelName: parcel.parcelName,
+      trackingId: parcel.trackingId,
+    };
+    const res = await axiosSecure.post("payment-checkout-session", paymentInfo);
     console.log(res.data);
     window.location.assign(res.data.url);
-    
-  }
+  };
 
   //   Calculate total cost
   const totalCost = parcels.reduce(
@@ -107,17 +106,28 @@ const MyParcel = () => {
                   ) : (
                     // <Link to={`/dashboard/payment/${parcel._id}`} className="myBtn btn-sm">Pay</Link>
                     <button
-                    onClick={()=>handlePayment(parcel)} className="myBtn btn-sm">Pay</button>
+                      onClick={() => handlePayment(parcel)}
+                      className="btnSmall"
+                    >
+                      Pay
+                    </button>
                   )}
                 </td>
-                
+
                 <td>
-                  {parcel.trackingId ? parcel.trackingId : "N/A"}
+                  <Link
+                    to={`/track-parcel/${parcel.trackingId}`}
+                    className="text-red-600"
+                  >
+                    {parcel.trackingId ? parcel.trackingId : "N/A"}
+                  </Link>
                 </td>
 
                 {/* If status exists, show it — else default to "Pending" */}
                 <td>
-                  {parcel.deliveryStatus ? parcel.deliveryStatus : "Pending"}
+                  <span className="bg-green-200 px-2 py-1 rounded-xl">
+                    {parcel.deliveryStatus ? parcel.deliveryStatus : "Pending"}
+                  </span>
                 </td>
 
                 {/* Action Buttons (View, Edit and Delete) */}

@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet } from "react-router";
 import Logo from "../components/Logo";
 import { CiCreditCard1, CiDeliveryTruck } from "react-icons/ci";
 import { FaTasks } from "react-icons/fa";
+import { AiOutlineCheckCircle } from "react-icons/ai";
 import { FaAddressCard, FaMotorcycle } from "react-icons/fa6";
 import {
   MdAssignmentInd,
@@ -119,6 +120,18 @@ const DashboardLayout = () => {
                       <FaTasks className="inline-block size-4.5" />
                       <span className="is-drawer-close:hidden">
                         Assigned Deliveries
+                      </span>
+                    </NavLink>
+                  </li>
+                  <li>
+                    <NavLink
+                      to="completed-deliveries"
+                      className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                      data-tip="Completed Deliveries"
+                    >
+                      <AiOutlineCheckCircle className="inline-block size-4.5" />
+                      <span className="is-drawer-close:hidden">
+                        Completed Deliveries
                       </span>
                     </NavLink>
                   </li>
