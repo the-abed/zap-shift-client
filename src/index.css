@@ -21,3 +21,9 @@ body {
 .myBtn .active {
   background-color: #caeb66;
 }
+.btnSmall{
+  @apply btn btn-sm bg-primary hover:bg-green-500 mt-1;
+}
+.btnWarn{
+  @apply btn btn-sm bg-amber-500 hover:bg-amber-600 mt-1 text-black;
+}

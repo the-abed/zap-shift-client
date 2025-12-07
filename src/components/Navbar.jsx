@@ -72,7 +72,7 @@ const Navbar = () => {
         </div>
         <div className="navbar-end">
           {user ? (
-            <div className="avatar tooltip tooltip-left flex items-center gap-2" data-tip={user?.displayName} >
+            <div className="avatar tooltip tooltip-left flex items-center gap-2" data-tip={user?.email} >
               <img  className="w-10 rounded-full cursor-pointer " src={user?.photoURL} alt="" />
               <button onClick={handleLogOut} className="myBtn ml-2">
                 LogOut

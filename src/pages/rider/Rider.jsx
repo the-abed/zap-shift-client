@@ -18,10 +18,10 @@ export default function RiderApplication() {
 
   const selectedRegion = useWatch({ control, name: "region" });
 
-//   const districts = useMemo(() => {
-//     if (!selectedRegion) return [];
-//     return serviceCenter.filter((c) => c.region === selectedRegion);
-//   }, [selectedRegion, serviceCenter]);
+  //   const districts = useMemo(() => {
+  //     if (!selectedRegion) return [];
+  //     return serviceCenter.filter((c) => c.region === selectedRegion);
+  //   }, [selectedRegion, serviceCenter]);
 
   const warehouse = useMemo(() => {
     if (!selectedRegion) return [];
@@ -131,9 +131,7 @@ export default function RiderApplication() {
 
           {/* Warehouse Selection (Full width) */}
           <fieldset className="fieldset">
-            <legend className="fieldset-legend">
-              Select your district
-            </legend>
+            <legend className="fieldset-legend">Select your district</legend>
             <select {...register("district")} className="input w-full">
               <option value="" disabled selected>
                 Select district
