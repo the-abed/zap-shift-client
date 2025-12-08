@@ -20,11 +20,11 @@ const AssignedDeliveries = () => {
   });
 
   const handleUpdateDeliveryStatus = (parcel, status) => {
-    const statusInfo = { 
-        deliveryStatus: status,
-        riderId: parcel.riderId,
-        trackingId: parcel.trackingId
-     };
+    const statusInfo = {
+      deliveryStatus: status,
+      riderId: parcel.riderId,
+      trackingId: parcel.trackingId,
+    };
     let message = `Parcel status updated to ${status
       .split("_")
       .join(" ")} successfully.`;
@@ -65,7 +65,6 @@ const AssignedDeliveries = () => {
             </tr>
           </thead>
           <tbody>
-
             {/* Table body*/}
             {parcels.map((parcel, index) => (
               <tr key={index}>
@@ -78,7 +77,10 @@ const AssignedDeliveries = () => {
                     <>
                       <button
                         onClick={() =>
-                          handleUpdateDeliveryStatus(parcel, "accepted_for_delivery")
+                          handleUpdateDeliveryStatus(
+                            parcel,
+                            "accepted_for_delivery"
+                          )
                         }
                         className="btnSmall"
                       >
@@ -88,7 +90,6 @@ const AssignedDeliveries = () => {
                     </>
                   ) : (
                     <button disabled className="btnWarn">
-                      
                       Accepted
                     </button>
                   )}

@@ -8,7 +8,7 @@ const AssignRiders = () => {
   const axiosSecure = useAxiosSecure();
   const riderModalRef = useRef(null);
 
-  const { data: parcels = [] } = useQuery({
+  const { data: parcels = [], refetch: parcelRefetch } = useQuery({
     queryKey: ["riders", "pending-pickup"],
     queryFn: async () => {
       const res = await axiosSecure.get(
@@ -19,7 +19,7 @@ const AssignRiders = () => {
   });
 
   // TODO: Invalidate the query when a rider is assigned
-  const { data: riders = [] , refetch} = useQuery({
+  const { data: riders = [], refetch } = useQuery({
     queryKey: ["riders", selectedParcel?.senderDistrict, "available"],
     enabled: !!selectedParcel,
     queryFn: async () => {
@@ -47,6 +47,7 @@ const AssignRiders = () => {
       .patch(`/parcels/${selectedParcel._id}`, riderInfo)
       .then((res) => {
         if (res.data.modifiedCount) {
+          parcelRefetch();
           refetch();
           Swal.fire({
             position: "top-center",
@@ -121,40 +122,40 @@ const AssignRiders = () => {
         <div className="modal-box">
           <h2 className="font-bold text-lg">Riders: {riders.length}</h2>
 
-        {/* Find Riders */}
+          {/* Find Riders */}
           <div className="overflow-x-auto">
-              <table className="table table-zebra">
-                {/* head */}
-                <thead>
-                  <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>District</th>
-                    <th>Status</th>
-                    <th>Action</th>
+            <table className="table table-zebra">
+              {/* head */}
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>District</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {/* Available Riders */}
+                {riders.map((rider, index) => (
+                  <tr key={rider._id}>
+                    <th>{index + 1}</th>
+                    <td>{rider.name}</td>
+                    <td>{rider.district}</td>
+                    <td>{rider.status}</td>
+                    <td>
+                      <button
+                        onClick={() => handleAssignRider(rider)}
+                        className="btn btn-sm bg-primary text-black"
+                      >
+                        Assign
+                      </button>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {/* Available Riders */}
-                  {riders.map((rider, index) => (
-                    <tr key={rider._id}>
-                      <th>{index + 1}</th>
-                      <td>{rider.name}</td>
-                      <td>{rider.district}</td>
-                      <td>{rider.status}</td>
-                      <td>
-                        <button
-                          onClick={() => handleAssignRider(rider)}
-                          className="btn btn-sm bg-primary text-black"
-                        >
-                          Assign
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="modal-action">
             <form method="dialog">
@@ -162,7 +163,6 @@ const AssignRiders = () => {
               <button className="btn">Close</button>
             </form>
           </div>
-
         </div>
       </dialog>
     </div>

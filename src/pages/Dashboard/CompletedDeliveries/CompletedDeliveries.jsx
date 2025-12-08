@@ -1,36 +1,38 @@
-import React from 'react';
-import useAuth from '../../../hooks/useAuth';
-import useAxiosSecure from '../../../hooks/useAxiosSecure';
-import { useQuery } from '@tanstack/react-query';
+import React from "react";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 const CompletedDeliveries = () => {
-     const { user } = useAuth();
-      const axiosSecure = useAxiosSecure();
-    
-      const { data: parcels = [], } = useQuery({
-        queryKey: ["parcels", user.email, "assigned"],
-        queryFn: async () => {
-          const res = await axiosSecure.get(
-            `/parcels/rider?riderEmail=${user.email}&deliveryStatus=parcel_delivered`
-          );
-          // console.log("my-deliveries:",res.data);
-          return res.data;
-        },
-      });
+  const { user } = useAuth();
+  const axiosSecure = useAxiosSecure();
 
-      const calculatePayout = ( parcel ) => {
-          if(parcel.senderDistrict === parcel.receiverDistrict){
-              return parcel.cost * 0.8;
-          }else{
-              return parcel.cost * 0.9;
-          }
-      }
+  const { data: parcels = [] } = useQuery({
+    queryKey: ["parcels", user.email, "assigned"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/parcels/rider?riderEmail=${user.email}&deliveryStatus=parcel_delivered`
+      );
+      // console.log("my-deliveries:",res.data);
+      return res.data;
+    },
+  });
 
-    return (
-        <div className="p-5">
-            <h2 className="text-3xl font-bold">Completed Deliveries: ({parcels.length})</h2>
+  const calculatePayout = (parcel) => {
+    if (parcel.senderDistrict === parcel.receiverDistrict) {
+      return parcel.cost * 0.8;
+    } else {
+      return parcel.cost * 0.9;
+    }
+  };
 
-                  {/* Table */}
+  return (
+    <div className="p-5">
+      <h2 className="text-3xl font-bold">
+        Completed Deliveries: ({parcels.length})
+      </h2>
+
+      {/* Table */}
       <div className="overflow-x-auto">
         <table className="table table-zebra">
           {/* head */}
@@ -56,13 +58,9 @@ const CompletedDeliveries = () => {
                   <td>{parcel.senderDistrict}</td>
                   <td>{parcel.cost}</td>
                   <td>{calculatePayout(parcel)}</td>
-                  
+
                   <td>
-                    <button
-                      className="btnSmall"
-                    >
-                      Cash Out
-                    </button>
+                    <button className="btnSmall">Cash Out</button>
                   </td>
                 </tr>
               </>
@@ -70,8 +68,8 @@ const CompletedDeliveries = () => {
           </tbody>
         </table>
       </div>
-        </div>
-    );
+    </div>
+  );
 };
 
 export default CompletedDeliveries;

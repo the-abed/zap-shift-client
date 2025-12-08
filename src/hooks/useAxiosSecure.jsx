@@ -5,7 +5,7 @@ import { config } from "dotenv";
 import { useNavigate } from "react-router";
 
 const axiosSecure = axios.create({
-  baseURL: "http://localhost:5000",
+  baseURL: "https://zap-shift-server-umber.vercel.app",
 });
 const useAxiosSecure = () => {
   const { user, logOut } = useAuth();

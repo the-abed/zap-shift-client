@@ -18,7 +18,7 @@ const Navbar = () => {
         <NavLink to="/">Home</NavLink>
       </li>
       <li>
-        <NavLink to="/rider">Rider</NavLink>
+        <NavLink to="/rider">Be a Rider</NavLink>
       </li>
 
       {user && (
@@ -28,6 +28,9 @@ const Navbar = () => {
           </li>
           <li>
             <NavLink to="dashboard/myParcel">My Parcel</NavLink>
+          </li>
+          <li>
+            <NavLink to="dashboard">Dashboard</NavLink>
           </li>
         </>
       )}

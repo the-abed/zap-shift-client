@@ -5,7 +5,7 @@ import { Link, useLocation, useNavigate } from "react-router";
 import GoogleLogin from "../components/GoogleLogin";
 
 const Login = () => {
-  const { signIn, googleSignIn } = useAuth();
+  const { signIn, } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
